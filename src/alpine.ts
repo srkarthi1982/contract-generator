@@ -1,6 +1,6 @@
 import type { Alpine } from "alpinejs";
+import { createContractStore } from "./store/app";
 
 export default function initAlpine(Alpine: Alpine) {
-  // Intentionally minimal.
-  // Each app will register its own stores here later.
+  Alpine.store("contractApp", createContractStore());
 }

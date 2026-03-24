@@ -1,92 +1,41 @@
 ---
 import AppShell from "../layouts/AppShell.astro";
-import { AvContainer, AvButton } from "@ansiversa/components";
+import { AvButton, AvContainer } from "@ansiversa/components";
+import { appMeta } from "../app.meta";
 
-const title = "Contract Generator – Ansiversa";
-const description = "Draft agreements with editable terms.";
+const title = `${appMeta.name} – Ansiversa`;
+const description = appMeta.description;
 ---
 
 <AppShell title={title} description={description}>
-  <!-- Hero -->
   <section class="av-hero">
     <AvContainer size="narrow" className="av-hero__content--narrow">
       <div class="av-hero__content">
         <div class="av-kicker">
-          <span>Career & Work · Ansiversa Mini App</span>
+          <span>Business & Operations · Ansiversa Mini App</span>
         </div>
-        <h1 class="av-gradient-text">Contract Generator</h1>
+        <h1 class="av-gradient-text">{appMeta.name}</h1>
         <p>
-          Draft agreements with editable terms.
+          Create professional, structured agreements in minutes with a clean live preview and copy-ready output.
         </p>
       </div>
       <div class="av-cta-row">
-        <AvButton href="https://contract-generator.ansiversa.com">Launch Contract</AvButton>
+        <AvButton href={appMeta.appPath}>Open {appMeta.name}</AvButton>
       </div>
     </AvContainer>
   </section>
 
-  <!-- Problem -->
   <section class="av-section">
     <AvContainer size="narrow">
       <div class="av-section-header">
-        <h2 class="av-section-title">The problem it solves</h2>
+        <h2 class="av-section-title">Built for premium drafting workflows</h2>
         <p class="av-section-lead">
-          Career tasks like resumes, meetings, and communication often feel scattered.
+          A trustworthy writing experience for teams and professionals who need editable agreements quickly.
         </p>
       </div>
       <div class="av-section-body space-y-3 text-slate-300">
-        <p>Contract Generator takes one piece of your career workflow and makes it effortless.</p>
-      </div>
-    </AvContainer>
-  </section>
-
-  <!-- Why this mini app -->
-  <section class="av-section">
-    <AvContainer size="narrow">
-      <div class="av-section-header">
-        <h2 class="av-section-title">Why Contract Generator feels different</h2>
-        <p class="av-section-lead">
-          A focused mini app inside the larger Ansiversa ecosystem.
-        </p>
-      </div>
-      <div class="av-section-body">
-        <ul class="space-y-2 text-slate-300 list-disc list-inside">
-          <li>Focused on a single, real-world career task.</li>
-          <li>Gives you professional-quality output without complex tools.</li>
-          <li>Keeps everything structured, consistent, and reusable.</li>
-        </ul>
-      </div>
-    </AvContainer>
-  </section>
-
-  <!-- How it works -->
-  <section class="av-section">
-    <AvContainer size="narrow">
-      <div class="av-section-header">
-        <h2 class="av-section-title">How it works</h2>
-        <p class="av-section-lead">
-          Simple, clear steps so people can start in under a minute.
-        </p>
-      </div>
-      <ol class="av-section-body space-y-2 text-slate-300 list-decimal list-inside">
-        <li>Open Contract Generator before you start your task.</li>
-        <li>Provide a few key details about your role, client, or context.</li>
-        <li>Generate polished output you can refine and use immediately.</li>
-      </ol>
-    </AvContainer>
-  </section>
-
-  <!-- Final CTA -->
-  <section class="av-section">
-    <AvContainer size="narrow">
-      <div class="av-section-header">
-        <h2 class="av-section-title">Ready to try Contract Generator?</h2>
-        <p class="av-section-lead">
-          Open the app, follow the simple flow, and let it handle the heavy lifting.
-        </p>
-      </div>
-      <div class="av-cta-row">
-        <AvButton href="https://contract-generator.ansiversa.com">Start with Contract</AvButton>
+        <p>Capture core contract details, define responsibilities, and maintain clarity from first draft to final copy.</p>
+        <p>No legal automation complexity—just structured drafting done exceptionally well.</p>
       </div>
     </AvContainer>
   </section>

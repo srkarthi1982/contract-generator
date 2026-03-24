@@ -1,0 +1,335 @@
+---
+import AppShell from "../layouts/AppShell.astro";
+import { AvButton, AvCard, AvCheckbox, AvInput, AvTextarea } from "@ansiversa/components";
+
+const title = "Contract Generator App – Ansiversa";
+const description = "Draft business-ready agreements with editable terms and a live preview.";
+---
+
+<AppShell title={title} description={description}>
+  <section class="av-section">
+    <div class="av-container-wide" x-data="$store.contractApp" x-init="init()">
+      <div class="contract-top-bar">
+        <h1 class="contract-page-title">Contract Generator</h1>
+        <p class="contract-page-subtitle">
+          Build clean, structured agreements with editable sections and a premium live preview.
+        </p>
+      </div>
+
+      <div class="contract-layout">
+        <div class="contract-form-column">
+          <AvCard>
+            <div class="av-card-header">
+              <h2 class="av-card-title">Contract basics</h2>
+              <p class="av-card-subtitle">Set title, dates, jurisdiction, and who prepared this draft.</p>
+            </div>
+            <div class="av-card-body contract-fields">
+              <AvInput label="Contract title" x-model="draft.title" @input="persist()" />
+              <AvInput label="Agreement type" x-model="draft.agreementType" @input="persist()" />
+              <div class="contract-grid-2">
+                <AvInput label="Effective date" type="date" x-model="draft.effectiveDate" @input="persist()" />
+                <AvInput label="End date (optional)" type="date" x-model="draft.endDate" @input="persist()" />
+              </div>
+              <AvInput
+                label="Governing region / jurisdiction"
+                placeholder="Example: California, USA"
+                x-model="draft.jurisdiction"
+                @input="persist()"
+              />
+              <AvInput label="Prepared by" x-model="draft.preparedBy" @input="persist()" />
+            </div>
+          </AvCard>
+
+          <AvCard>
+            <div class="av-card-header">
+              <h2 class="av-card-title">Parties</h2>
+              <p class="av-card-subtitle">Capture both sides clearly before writing obligations.</p>
+            </div>
+            <div class="av-card-body contract-fields">
+              <div class="contract-grid-2">
+                <AvInput label="Party A name" x-model="draft.partyAName" @input="persist()" />
+                <AvInput label="Party B name" x-model="draft.partyBName" @input="persist()" />
+              </div>
+              <AvTextarea
+                label="Party A details"
+                rows={3}
+                placeholder="Legal name, address, contact, representative"
+                x-model="draft.partyADetails"
+                @input="persist()"
+              />
+              <AvTextarea
+                label="Party B details"
+                rows={3}
+                placeholder="Legal name, address, contact, representative"
+                x-model="draft.partyBDetails"
+                @input="persist()"
+              />
+            </div>
+          </AvCard>
+
+          <AvCard>
+            <div class="av-card-header">
+              <h2 class="av-card-title">Core sections</h2>
+              <p class="av-card-subtitle">Write the practical terms of the agreement.</p>
+            </div>
+            <div class="av-card-body contract-fields">
+              <AvTextarea label="Purpose / Overview" rows={4} x-model="draft.purpose" @input="persist()" />
+              <AvTextarea
+                label="Scope of work / responsibilities"
+                rows={5}
+                x-model="draft.scope"
+                @input="persist()"
+              />
+              <AvTextarea
+                label="Payment terms"
+                rows={4}
+                x-model="draft.paymentTerms"
+                @input="persist()"
+                x-show="draft.showPaymentTerms"
+              />
+              <AvTextarea
+                label="Confidentiality"
+                rows={4}
+                x-model="draft.confidentiality"
+                @input="persist()"
+                x-show="draft.showConfidentiality"
+              />
+              <AvTextarea
+                label="Termination"
+                rows={4}
+                x-model="draft.termination"
+                @input="persist()"
+                x-show="draft.showTermination"
+              />
+              <AvTextarea
+                label="Additional terms"
+                rows={4}
+                x-model="draft.additionalTerms"
+                @input="persist()"
+                x-show="draft.showAdditionalTerms"
+              />
+            </div>
+          </AvCard>
+
+          <AvCard>
+            <div class="av-card-header">
+              <h2 class="av-card-title">Section toggles</h2>
+              <p class="av-card-subtitle">Show or hide optional sections in the live contract preview.</p>
+            </div>
+            <div class="av-card-body contract-toggle-list">
+              <AvCheckbox
+                label="Include payment terms"
+                :checked="draft.showPaymentTerms"
+                @change="draft.showPaymentTerms = !draft.showPaymentTerms; persist()"
+              />
+              <AvCheckbox
+                label="Include confidentiality"
+                :checked="draft.showConfidentiality"
+                @change="draft.showConfidentiality = !draft.showConfidentiality; persist()"
+              />
+              <AvCheckbox
+                label="Include termination"
+                :checked="draft.showTermination"
+                @change="draft.showTermination = !draft.showTermination; persist()"
+              />
+              <AvCheckbox
+                label="Include additional terms"
+                :checked="draft.showAdditionalTerms"
+                @change="draft.showAdditionalTerms = !draft.showAdditionalTerms; persist()"
+              />
+            </div>
+          </AvCard>
+
+          <div class="contract-action-row">
+            <AvButton @click="copyContract()" type="button">Copy full contract text</AvButton>
+            <AvButton variant="outline" @click="resetDraft()" type="button">Reset / new contract</AvButton>
+            <span class="contract-copy-feedback" x-show="copied" x-transition>Copied to clipboard.</span>
+          </div>
+        </div>
+
+        <div class="contract-preview-column">
+          <AvCard className="contract-preview-card">
+            <div class="av-card-header">
+              <h2 class="av-card-title">Live agreement preview</h2>
+              <p class="av-card-subtitle">Structured output mirrors the copied contract format.</p>
+            </div>
+            <div class="av-card-body">
+              <article class="contract-preview">
+                <h3 x-text="draft.title || 'Contract Agreement'"></h3>
+                <p><strong>Agreement Type:</strong> <span x-text="draft.agreementType || 'General Agreement'"></span></p>
+                <p>
+                  <strong>Effective Date:</strong> <span x-text="draft.effectiveDate || 'Not specified'"></span>
+                  <span class="contract-inline-divider">•</span>
+                  <strong>End Date:</strong> <span x-text="draft.endDate || 'Open-ended'"></span>
+                </p>
+                <p x-show="draft.jurisdiction"><strong>Governing Region / Jurisdiction:</strong> <span x-text="draft.jurisdiction"></span></p>
+                <p x-show="draft.preparedBy"><strong>Prepared By:</strong> <span x-text="draft.preparedBy"></span></p>
+
+                <h4>Between / Parties</h4>
+                <p><strong x-text="draft.partyAName || 'Party A'"></strong></p>
+                <p class="contract-block" x-text="draft.partyADetails || 'Details not provided.'"></p>
+                <p><strong x-text="draft.partyBName || 'Party B'"></strong></p>
+                <p class="contract-block" x-text="draft.partyBDetails || 'Details not provided.'"></p>
+
+                <h4>Purpose / Overview</h4>
+                <p class="contract-block" x-text="draft.purpose || 'Purpose to be defined by the parties.'"></p>
+
+                <h4>Scope of Work / Responsibilities</h4>
+                <p class="contract-block" x-text="draft.scope || 'Scope and responsibilities to be defined by the parties.'"></p>
+
+                <template x-if="draft.showPaymentTerms">
+                  <div>
+                    <h4>Payment Terms</h4>
+                    <p class="contract-block" x-text="draft.paymentTerms || 'Payment terms to be mutually agreed in writing.'"></p>
+                  </div>
+                </template>
+
+                <template x-if="draft.showConfidentiality">
+                  <div>
+                    <h4>Confidentiality</h4>
+                    <p class="contract-block" x-text="draft.confidentiality || 'Each party will maintain confidentiality of non-public information.'"></p>
+                  </div>
+                </template>
+
+                <template x-if="draft.showTermination">
+                  <div>
+                    <h4>Termination</h4>
+                    <p class="contract-block" x-text="draft.termination || 'Termination conditions to be agreed by both parties.'"></p>
+                  </div>
+                </template>
+
+                <template x-if="draft.showAdditionalTerms">
+                  <div>
+                    <h4>Additional Terms</h4>
+                    <p class="contract-block" x-text="draft.additionalTerms || 'No additional terms provided.'"></p>
+                  </div>
+                </template>
+
+                <h4>Signatures</h4>
+                <p class="contract-signature-line"><span x-text="draft.partyAName || 'Party A'"></span>: _________________________ Date: ____________</p>
+                <p class="contract-signature-line"><span x-text="draft.partyBName || 'Party B'"></span>: _________________________ Date: ____________</p>
+              </article>
+            </div>
+          </AvCard>
+        </div>
+      </div>
+    </div>
+  </section>
+</AppShell>
+
+<style>
+  .contract-top-bar {
+    margin-bottom: 1.25rem;
+  }
+
+  .contract-page-title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+  }
+
+  .contract-page-subtitle {
+    color: var(--av-text-muted);
+    margin-top: 0.4rem;
+    max-width: 64ch;
+  }
+
+  .contract-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.02fr) minmax(0, 0.98fr);
+    gap: 1rem;
+    align-items: start;
+  }
+
+  .contract-form-column,
+  .contract-preview-column {
+    display: flex;
+    flex-direction: column;
+    gap: 0.95rem;
+  }
+
+  .contract-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+  }
+
+  .contract-grid-2 {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
+
+  .contract-toggle-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+
+  .contract-action-row {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    flex-wrap: wrap;
+  }
+
+  .contract-copy-feedback {
+    font-size: 0.92rem;
+    color: #5eead4;
+  }
+
+  .contract-preview-card {
+    position: sticky;
+    top: 5.5rem;
+  }
+
+  .contract-preview {
+    line-height: 1.55;
+    color: #dbe6f4;
+  }
+
+  .contract-preview h3 {
+    font-size: 1.4rem;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+    margin-bottom: 0.8rem;
+  }
+
+  .contract-preview h4 {
+    margin-top: 1.1rem;
+    margin-bottom: 0.4rem;
+    font-size: 0.98rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: #93c5fd;
+  }
+
+  .contract-block {
+    white-space: pre-wrap;
+  }
+
+  .contract-inline-divider {
+    opacity: 0.45;
+    margin: 0 0.45rem;
+  }
+
+  .contract-signature-line {
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 1080px) {
+    .contract-layout {
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .contract-preview-card {
+      position: static;
+    }
+  }
+
+  @media (max-width: 720px) {
+    .contract-grid-2 {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>
