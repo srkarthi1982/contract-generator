@@ -25,6 +25,9 @@ MANDATORY: After completing each task, update this repo’s AGENTS.md Task Log (
 - Review this repo's existing AGENTS.md Task Log history before making changes.
 
 ## Task Log (Recent)
+- 2026-03-24 Contract Generator V1 implementation started (public /app flow) and strict V1 scope implemented with premium two-panel drafting UX.
+- 2026-03-24 Added local draft persistence via localStorage, live structured preview, copy full contract, and reset/new contract confirmation behavior.
+- 2026-03-24 Validation: npm install passed; npm run build passed; npm run typecheck blocked by restricted npm registry (403 installing @astrojs/check).
 - Keep newest first; include date and short summary.
 - 2026-02-09 Added repo-level AGENTS.md enforcement contract (workspace reference + mandatory task-log update rule).
 - 2026-02-09 Initialized repo AGENTS baseline for single-repo Codex/AI safety.
